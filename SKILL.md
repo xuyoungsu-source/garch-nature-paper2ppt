@@ -443,6 +443,7 @@ Generate a minimal but complete output package by default.
 The main deliverable: a complete Chinese PPTX deck with figures, captions, takeaways, source labels, and speaker notes.
 
 ## 2. `output/qa_report.md`
+(Include or attach `qa_style_report.md` produced by `scripts/enforce_style.py`.)
 A short quality report:
 - PPTX creation status,
 - slide count,
@@ -518,6 +519,24 @@ Skip the optional outline/script/figure-plan files by default unless they materi
 - Ensure figures are readable at presentation scale.
 - Ensure text, captions, and figures do not overlap.
 - Document uncertainty and missing source material clearly.
+
+
+## Mandatory post-process step (STRICT — never skip)
+
+After `python-pptx` saves the deck, ALWAYS run the bundled style enforcer on it and treat its report as part of the QA deliverable:
+
+```bash
+python3 scripts/enforce_style.py output/final_presentation_cn.pptx --report output/qa_style_report.md
+```
+
+The script (bundled at `scripts/enforce_style.py`) deterministically enforces the User Style Preset:
+- latin font Arial + East Asian font 微软雅黑 on every run,
+- title 20 pt bold, body 18 pt (runs already >= 21 pt on the cover are kept),
+- 1.5 line spacing on every paragraph,
+- removes `Source:` footers,
+- shrinks pictures that overlap text and reports out-of-bounds shapes.
+
+It is idempotent and exits non-zero if any layout issue remains — fix the layout and re-run until it exits 0. The original .pptx is updated in place; do not hand-edit afterwards. Copy the report into `qa_report.md` or ship it alongside.
 
 # Fallback Rules
 If only partial content is available:
