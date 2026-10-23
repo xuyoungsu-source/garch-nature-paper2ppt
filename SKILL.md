@@ -31,6 +31,45 @@ The default slide logic should help the audience answer, in order:
 
 This is more important than copying the paper section order.
 
+
+# User Style Preset (Owner Customization — applies to every deck unless the user overrides)
+
+These rules override the defaults below wherever they conflict. Apply them to every slide without being asked.
+
+## 1. Typography
+- East Asian font: 微软雅黑 (Microsoft YaHei). Latin font: Arial.
+  When authoring with python-pptx, set BOTH `a:latin typeface="Arial"` and `a:ea typeface="微软雅黑"` on every run; a bare `font.name` only sets latin.
+- Slide title: 20 pt, bold.
+- Body text (bullets, captions, interpretation rails, takeaways): 18 pt.
+- Line spacing: 1.5 for all multi-line paragraphs. In python-pptx set `paragraph.line_spacing = 1.5`; do not rely on theme inheritance.
+- Auxiliary micro-labels (section kickers, figure panel tags) may be 14–16 pt, but never body content.
+
+## 2. No source footers
+Do not render `Source: ...` footers at the bottom of figure slides. Keep provenance in speaker notes or the asset manifest instead.
+
+## 3. Figures: large and never overlapping text
+- Maximize the figure area on evidence slides; a result figure should dominate its slide (target ≥ 60% of slide area).
+- Compute image boxes from the real text-rail width; never let a picture overlap any text shape.
+  Verify programmatically: after layout, assert for every pair (picture, text shape) that their bounding boxes do not intersect; shrink the image until they do not.
+- Prefer cropping dense multi-panel figures to the key panel over downscaling the whole figure into unreadability.
+
+## 4. Title divider
+The accent divider line under the slide title sits close beneath the title text (≈0.15–0.25 inch below the title baseline block). Keep the space under the divider as the content zone.
+
+## 5. Corresponding-author slide (immediately after the cover)
+Slide 2 is always the corresponding-author slide, containing:
+- a short bio (degree, position, institution, honors);
+- the author photo when obtainable from an authoritative, downloadable public source (university profile page, ORCID, institutional repository). If no usable authorized photo can be retrieved, say so explicitly on the slide with a note like "照片未获取到公开授权图片" and use an info card instead — never fabricate or hotlink a random portrait;
+- recent publications (last ~3–5 years) as a compact list. Every non-Chinese title must be given in full, in English, exactly as published (journal + year included).
+
+## 6. Cover page
+The cover is a designed title page, not a text dump: one dominant visual (graphical abstract or hero figure), the paper title in Chinese, the original title in English, authors/journal/year/DOI, plus a one-sentence take-home summary. Cover title size may exceed 20 pt.
+
+## 7. Layout quality bar
+- Asymmetric layouts by default; the hero element owns the page.
+- Keep ≥ 0.3 inch gutters between all shapes; align text rails to a consistent left edge.
+- Before saving, run a geometric lint: no shape out of slide bounds, no text/image overlap, no empty regions larger than 2 × 2 inches.
+
 # Lean Operating Mode
 Default to the lowest-overhead workflow that still produces a usable PPTX.
 
@@ -261,7 +300,7 @@ The PPTX should:
 - use 16:9 widescreen layout by default,
 - include the selected original figures,
 - use Chinese titles, bullets, captions, and speaker notes,
-- include source labels for figure slides,
+- keep figure provenance in speaker notes / asset manifest (no on-slide source footers),
 - keep slide text concise and readable,
 - avoid text-only result slides when visuals are available,
 - maintain consistent typography, spacing, titles, captions, and section transitions.
